@@ -19,11 +19,13 @@ public class Pyramid {
     private final short[] mIndicesData =
             {
                     0,1,2,
-                    0,2,3,
-                    0,3,4,
-                    0,4,1,
-                    3,4,2,1
+                    2,3,0,
+                    3,4,0,
+                    4,1,0,
+                    3,4,1,
+                    3,1,2
             };
+    private int mNumIndices = 18;
 
     private final String vertexShaderCode =
             // This matrix member variable provides a hook to manipulate
@@ -51,10 +53,10 @@ public class Pyramid {
     static final int COORDS_PER_VERTEX = 3;
     static float pyramidCoords[] = {   // in counterclockwise order:
             0.0f,  0.622008459f, 0.0f, // top
-            -0.5f, -0.311004243f, -0.5f, // bottom left
-            0.5f, -0.311004243f, -0.5f  // bottom right
-            -0.5f, -0.311004243f, 0.5f, // top left
-            0.5f, -0.311004243f, 0.5f  // top right
+            -0.5f, -0.311004243f, 0.5f, // bottom left
+            0.5f, -0.311004243f, 0.5f,  // bottom right
+            0.5f, -0.311004243f, -0.5f,  // top right
+            -0.5f, -0.311004243f, -0.5f // top left
     };
 
     // Set color with red, green, blue and alpha (opacity) values
@@ -111,7 +113,7 @@ public class Pyramid {
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
     public void draw(float[] mMVPMatrix) {
-        int numIndices = 16;
+        int numIndices = mNumIndices;
         // Add program to OpenGL ES environment
         GLES30.glUseProgram(mProgram);
 
