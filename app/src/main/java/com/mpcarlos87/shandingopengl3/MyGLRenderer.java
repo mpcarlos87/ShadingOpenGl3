@@ -5,6 +5,9 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
+import com.mpcarlos87.shandingopengl3.Geometry.Pyramid;
+import com.mpcarlos87.shandingopengl3.Geometry.Triangle;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
