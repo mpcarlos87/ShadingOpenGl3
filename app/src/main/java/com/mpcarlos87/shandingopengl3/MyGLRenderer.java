@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
+import com.mpcarlos87.shandingopengl3.Geometry.Box;
 import com.mpcarlos87.shandingopengl3.Geometry.Pyramid;
 import com.mpcarlos87.shandingopengl3.Geometry.Triangle;
 
@@ -17,6 +18,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
     private Triangle mTriangle;
     private Pyramid mPyramid;
+    private Box mBox;
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
@@ -29,7 +31,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // initialize a triangle
         mTriangle = new Triangle();
         mPyramid = new Pyramid();
-
+        mBox = new Box();
     }
 
     @Override
@@ -74,6 +76,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         //mTriangle.draw(scratch);
         // Draw pyramid
         mPyramid.draw(scratch);
+        // Draw Box
+        //mBox.draw(scratch);
     }
 
     public static int loadShader(int type, String shaderCode){
