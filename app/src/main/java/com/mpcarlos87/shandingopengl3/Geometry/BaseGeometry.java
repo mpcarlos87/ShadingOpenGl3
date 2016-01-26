@@ -149,7 +149,7 @@ public class BaseGeometry {
 
         // Prepare the Colors for vertices
         GLES30.glVertexAttribPointer(mColorHandle, COLORS_PER_VERTEX,
-                GLES30.GL_FLOAT, false,vertexColorStride,vertexColorBuffer);
+                GLES30.GL_FLOAT, false, vertexColorStride, vertexColorBuffer);
 
         // get handle to shape's transformation matrix
         mMVPMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
@@ -172,7 +172,7 @@ public class BaseGeometry {
         //Bind the buffer of the faces
         GLES30.glBindBuffer ( GLES30.GL_ELEMENT_ARRAY_BUFFER, mVBOIds[0] );
 
-        // Draw the pyramid
+        // Draw the geometry
         GLES30.glDrawElements( GLES30.GL_TRIANGLES,numIndices,
                 GLES30.GL_UNSIGNED_SHORT, 0 );
 

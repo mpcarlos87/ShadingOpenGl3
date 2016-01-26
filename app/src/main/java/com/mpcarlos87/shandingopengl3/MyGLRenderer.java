@@ -28,7 +28,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        // initialize a triangle
+        GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+        GLES30.glDepthFunc(GLES30.GL_LESS);
+
+        // initialize the geometry
         mTriangle = new Triangle();
         mPyramid = new Pyramid();
         mBox = new Box();
@@ -54,7 +57,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         float[] scratch = new float[16];
 
         // Redraw background color
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
@@ -75,9 +78,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Draw triangle
         //mTriangle.draw(scratch);
         // Draw pyramid
-        mPyramid.draw(scratch);
+        //mPyramid.draw(scratch);
         // Draw Box
-        //mBox.draw(scratch);
+        mBox.draw(scratch);
     }
 
     public static int loadShader(int type, String shaderCode){
