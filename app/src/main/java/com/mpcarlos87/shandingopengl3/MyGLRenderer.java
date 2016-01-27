@@ -50,6 +50,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
     private float[] mRotationMatrix = new float[16];
+    private float[] mRotationMatrixX = new float[16];
+    private float[] mRotationMatrixY = new float[16];
 
     @Override
     public void onDrawFrame(GL10 gl) {
@@ -66,7 +68,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Create a rotation transformation for the triangle
         //long time = SystemClock.uptimeMillis() % 4000L;//TODO: TOUCH
         //mAngle = 0.090f * ((int) time);//TODO: TOUCH
-        Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, -1.0f, 0);
+        Matrix.setRotateM(mRotationMatrixY, 0, mAngleY, 0, -1.0f, 0);
+        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, -1.0f, 0, 0);
+        Matrix.multiplyMM(mRotationMatrix,0,mRotationMatrixX,0,mRotationMatrixY,0);
 
         // Combine the rotation matrix with the projection and camera view
         // Note that the mMVPMatrix factor *must be first* in order
@@ -94,13 +98,21 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         return shader;
     }
 
-    public volatile float mAngle;
+    public volatile float mAngleY,mAngleX;
 
-    public float getAngle() {
-        return mAngle;
+    public float getAngleY() {
+        return mAngleY;
     }
 
-    public void setAngle(float angle) {
-        mAngle = angle;
+    public void setAngleY(float angle) {
+        mAngleY = angle;
+    }
+
+    public float getAngleX() {
+        return mAngleX;
+    }
+
+    public void setAngleX(float angle) {
+        mAngleX = angle;
     }
 }
