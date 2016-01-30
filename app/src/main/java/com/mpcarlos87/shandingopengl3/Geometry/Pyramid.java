@@ -38,7 +38,7 @@ public class Pyramid extends BaseGeometry {
             1.0f,0.0f,0.0f,1.0f,
             0.0f,0.0f,1.0f,1.0f,
             1.0f,1.0f,0.0f,1.0f,
-            0.0f,1.0f,1.0f,1.0f};
+            0.0f,1.0f,0.0f,1.0f};
 
     public Pyramid() {
         super(pyramidCoords, pyramidFaceIndices, pyramidColors);

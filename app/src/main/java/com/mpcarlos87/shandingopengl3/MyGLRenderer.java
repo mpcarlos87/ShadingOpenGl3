@@ -1,5 +1,6 @@
 package com.mpcarlos87.shandingopengl3;
 
+import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -30,23 +31,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         GLES30.glDepthFunc(GLES30.GL_LESS);
-
         // initialize the geometry
-        mTriangle = new Triangle();
+        //mTriangle = new Triangle();
         mPyramid = new Pyramid();
-        mBox = new Box();
+        //mBox = new Box();
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES30.glViewport(0, 0, width, height);
-
         float ratio = (float) width / height;
-
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-
     }
 
     private float[] mRotationMatrix = new float[16];
@@ -69,7 +66,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         //long time = SystemClock.uptimeMillis() % 4000L;//TODO: TOUCH
         //mAngle = 0.090f * ((int) time);//TODO: TOUCH
         Matrix.setRotateM(mRotationMatrixY, 0, mAngleY, 0, -1.0f, 0);
-        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, -1.0f, 0, 0);
+        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, 1.0f, 0, 0);
         Matrix.multiplyMM(mRotationMatrix,0,mRotationMatrixX,0,mRotationMatrixY,0);
 
         // Combine the rotation matrix with the projection and camera view
@@ -78,11 +75,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
         // Draw triangle
-        //mTriangle.draw(scratch);
+        if(mTriangle!=null)
+            mTriangle.draw(scratch);
         // Draw pyramid
-        //mPyramid.draw(scratch);
+        if(mPyramid!=null)
+            mPyramid.draw(scratch);
         // Draw Box
-        mBox.draw(scratch);
+        if(mBox!=null)
+            mBox.draw(scratch);
     }
 
     public static int loadShader(int type, String shaderCode){

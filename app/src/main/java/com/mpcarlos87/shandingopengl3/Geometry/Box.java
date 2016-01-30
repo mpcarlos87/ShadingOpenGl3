@@ -35,7 +35,7 @@ public class Box extends BaseGeometry{
             -0.5f, -0.5f,  -0.5f,
             0.5f, -0.5f,  -0.5f,
             0.5f,  0.5f,  -0.5f,
-            -0.5f,  0.5f,  -0.5f,
+            -0.5f,  0.5f,  -0.5f
     };
 
     // Set color with red, green, blue and alpha (opacity) values
