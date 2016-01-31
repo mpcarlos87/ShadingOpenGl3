@@ -26,15 +26,24 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
 
+    // Rotation Matrices
+    private float[] mRotationMatrix = new float[16];
+    private float[] mRotationMatrixX = new float[16];
+    private float[] mRotationMatrixY = new float[16];
+
+    // Rotation angles
+    public volatile float mAngleY,mAngleX,mDistance;
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        mDistance = 1.0f;
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         GLES30.glDepthFunc(GLES30.GL_LESS);
         // initialize the geometry
         //mTriangle = new Triangle();
-        mPyramid = new Pyramid();
-        //mBox = new Box();
+        //mPyramid = new Pyramid();
+        mBox = new Box();
     }
 
     @Override
@@ -46,19 +55,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
     }
 
-    private float[] mRotationMatrix = new float[16];
-    private float[] mRotationMatrixX = new float[16];
-    private float[] mRotationMatrixY = new float[16];
-
     @Override
     public void onDrawFrame(GL10 gl) {
         float[] scratch = new float[16];
-
         // Redraw background color
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -5*mDistance, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
@@ -85,20 +88,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             mBox.draw(scratch);
     }
 
-    public static int loadShader(int type, String shaderCode){
-
-        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
+    public static int loadShader(int type, String shaderCode)
+    {
         int shader = GLES30.glCreateShader(type);
-
         // add the source code to the shader and compile it
         GLES30.glShaderSource(shader, shaderCode);
         GLES30.glCompileShader(shader);
-
         return shader;
     }
-
-    public volatile float mAngleY,mAngleX;
 
     public float getAngleY() {
         return mAngleY;
@@ -115,4 +112,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void setAngleX(float angle) {
         mAngleX = angle;
     }
+
+    public void setDistance(float distance){
+        mDistance = distance;
+    }
+
+    public float getDistance(){return mDistance;}
 }

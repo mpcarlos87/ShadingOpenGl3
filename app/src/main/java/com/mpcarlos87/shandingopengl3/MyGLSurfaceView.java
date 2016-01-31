@@ -2,6 +2,7 @@ package com.mpcarlos87.shandingopengl3;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -10,21 +11,17 @@ import android.view.MotionEvent;
 public class MyGLSurfaceView extends GLSurfaceView {
 
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
-    private float mPreviousX;
-    private float mPreviousY;
+    private float mPreviousX,mPreviousY;
+    private MotionEvent.PointerCoords mFinger1,mFinger2;
     private final MyGLRenderer mRenderer;
 
     public MyGLSurfaceView(Context context) {
         super(context);
-
         // Create an OpenGL ES 3.0 context
         setEGLContextClientVersion(3);
-
         mRenderer = new MyGLRenderer();
-
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(mRenderer);
-
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY); //TODO: TOUCH
     }
@@ -38,6 +35,20 @@ public class MyGLSurfaceView extends GLSurfaceView {
         float x = e.getX();
         float y = e.getY();
 
+        // Get the index of the pointer associated with the action.
+        int index = e.getAction();
+        int xPos = -1;
+        int yPos = -1;
+
+        Log.d("DEBUG_ACTIONS","The action is " + actionToString(index));
+
+        if (e.getPointerCount() > 1) {
+            Log.d("DEBUG_ACTIONS","Multitouch event");
+        } else {
+            // Single touch event
+            Log.d("DEBUG_ACTIONS","Single touch event");
+        }
+
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
 
@@ -47,10 +58,40 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 mRenderer.setAngleY(mRenderer.getAngleY() + (dx * TOUCH_SCALE_FACTOR));
                 mRenderer.setAngleX(mRenderer.getAngleX() + (dy * TOUCH_SCALE_FACTOR));
                 requestRender();
-        }
+                break;
 
+            // Case finger 1 down
+            case MotionEvent.ACTION_DOWN:
+                break;
+
+            // Case finger 1 up
+            case MotionEvent.ACTION_UP:
+                break;
+
+            // Case finger 2 or more down
+            case MotionEvent.ACTION_POINTER_DOWN:
+                break;
+
+            // Case finger 2 or more up
+            case MotionEvent.ACTION_POINTER_UP:
+                break;
+        }
         mPreviousX = x;
         mPreviousY = y;
         return true;
+    }
+
+    public static String actionToString(int action) {
+        switch (action) {
+
+            case MotionEvent.ACTION_DOWN: return "Down";
+            case MotionEvent.ACTION_MOVE: return "Move";
+            case MotionEvent.ACTION_POINTER_DOWN: return "Pointer Down";
+            case MotionEvent.ACTION_UP: return "Up";
+            case MotionEvent.ACTION_POINTER_UP: return "Pointer Up";
+            case MotionEvent.ACTION_OUTSIDE: return "Outside";
+            case MotionEvent.ACTION_CANCEL: return "Cancel";
+        }
+        return "";
     }
 }
