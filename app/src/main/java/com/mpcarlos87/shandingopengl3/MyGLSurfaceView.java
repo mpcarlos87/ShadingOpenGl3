@@ -2,6 +2,7 @@ package com.mpcarlos87.shandingopengl3;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -12,6 +13,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
     private float mPreviousX,mPreviousY;
+    private double mDistance;
+    private double mDiagonal;
     private MotionEvent.PointerCoords mFinger1,mFinger2;
     private final MyGLRenderer mRenderer;
 
@@ -24,6 +27,11 @@ public class MyGLSurfaceView extends GLSurfaceView {
         setRenderer(mRenderer);
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY); //TODO: TOUCH
+
+        DisplayMetrics dm = this.getContext().getResources().getDisplayMetrics();
+        int width=dm.widthPixels;
+        int height=dm.heightPixels;
+        mDiagonal = Math.sqrt(Math.pow(width,2)+Math.pow(height,2));
     }
 
     @Override
@@ -36,9 +44,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         float y = e.getY();
 
         // Get the index of the pointer associated with the action.
-        int index = e.getAction();
-        int xPos = -1;
-        int yPos = -1;
+        int index = e.getActionMasked();
 
         Log.d("DEBUG_ACTIONS","The action is " + actionToString(index));
 
@@ -49,15 +55,31 @@ public class MyGLSurfaceView extends GLSurfaceView {
             Log.d("DEBUG_ACTIONS","Single touch event");
         }
 
-        switch (e.getAction()) {
+        switch (e.getActionMasked()) {
             case MotionEvent.ACTION_MOVE:
+                //Single point
+                if(e.getPointerCount()== 1){
+                    float dx = x - mPreviousX;
+                    float dy = y - mPreviousY;
 
-                float dx = x - mPreviousX;
-                float dy = y - mPreviousY;
+                    mRenderer.setAngleY(mRenderer.getAngleY() + (dx * TOUCH_SCALE_FACTOR));
+                    mRenderer.setAngleX(mRenderer.getAngleX() + (dy * TOUCH_SCALE_FACTOR));
+                    requestRender();
+                }
+                //Multiple point
+                else if(e.getPointerCount()== 2){
 
-                mRenderer.setAngleY(mRenderer.getAngleY() + (dx * TOUCH_SCALE_FACTOR));
-                mRenderer.setAngleX(mRenderer.getAngleX() + (dy * TOUCH_SCALE_FACTOR));
-                requestRender();
+                    MotionEvent.PointerCoords newFinger1= new MotionEvent.PointerCoords(),newFinger2= new MotionEvent.PointerCoords();
+                    e.getPointerCoords(0,newFinger1);
+                    e.getPointerCoords(1, newFinger2);
+                    double newDistance = ComputeDistance(newFinger1, newFinger2);
+
+                    double coefficient = ((newDistance-mDistance)/mDiagonal)*100;
+                    mRenderer.setDistance(coefficient);
+                    Log.d("DEBUG_ACTIONS", String.format("Coefficient: %f",coefficient));
+                    mDistance = newDistance;
+                    requestRender();
+                }
                 break;
 
             // Case finger 1 down
@@ -70,10 +92,18 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
             // Case finger 2 or more down
             case MotionEvent.ACTION_POINTER_DOWN:
+                mFinger1 = new MotionEvent.PointerCoords();
+                mFinger2 = new MotionEvent.PointerCoords();
+                e.getPointerCoords(0,mFinger1);
+                e.getPointerCoords(1,mFinger2);
+                mDistance = ComputeDistance(mFinger1,mFinger2);
+                Log.d("DEBUG_ACTIONS", String.format("Distance: %f",mDistance));
                 break;
 
             // Case finger 2 or more up
             case MotionEvent.ACTION_POINTER_UP:
+                mFinger1= null;
+                mFinger2 = null;
                 break;
         }
         mPreviousX = x;
@@ -91,7 +121,12 @@ public class MyGLSurfaceView extends GLSurfaceView {
             case MotionEvent.ACTION_POINTER_UP: return "Pointer Up";
             case MotionEvent.ACTION_OUTSIDE: return "Outside";
             case MotionEvent.ACTION_CANCEL: return "Cancel";
+            case MotionEvent.ACTION_SCROLL: return "Scroll";
         }
         return "";
+    }
+
+    private double ComputeDistance(MotionEvent.PointerCoords coordA, MotionEvent.PointerCoords coordB){
+        return Math.sqrt(Math.pow(coordA.x-coordB.x,2)+Math.pow(coordA.y-coordB.y,2));
     }
 }

@@ -32,11 +32,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private float[] mRotationMatrixY = new float[16];
 
     // Rotation angles
-    public volatile float mAngleY,mAngleX,mDistance;
+    private float mAngleY,mAngleX;
+    private float mDistance;
+
+    private final int NEAR_PLANE = 1, FAR_PLANE = 40;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        mDistance = 1.0f;
+        mDistance = -3.0f;
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         GLES30.glDepthFunc(GLES30.GL_LESS);
@@ -52,7 +55,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         float ratio = (float) width / height;
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, NEAR_PLANE, FAR_PLANE);
     }
 
     @Override
@@ -61,15 +64,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Redraw background color
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -5*mDistance, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0,mDistance, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-
         // Create a rotation transformation for the triangle
         //long time = SystemClock.uptimeMillis() % 4000L;//TODO: TOUCH
         //mAngle = 0.090f * ((int) time);//TODO: TOUCH
-        Matrix.setRotateM(mRotationMatrixY, 0, mAngleY, 0, -1.0f, 0);
-        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, 1.0f, 0, 0);
+        Matrix.setRotateM(mRotationMatrixY, 0, mAngleY, 0, 1.0f, 0);
+        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, -1.0f, 0, 0);
         Matrix.multiplyMM(mRotationMatrix,0,mRotationMatrixX,0,mRotationMatrixY,0);
 
         // Combine the rotation matrix with the projection and camera view
@@ -113,9 +115,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         mAngleX = angle;
     }
 
-    public void setDistance(float distance){
-        mDistance = distance;
+    public void setDistance(double distance){
+        mDistance -= distance;
     }
-
-    public float getDistance(){return mDistance;}
 }
