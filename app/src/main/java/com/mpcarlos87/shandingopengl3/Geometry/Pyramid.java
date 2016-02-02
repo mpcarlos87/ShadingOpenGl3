@@ -14,7 +14,7 @@ import java.nio.ShortBuffer;
  */
 public class Pyramid extends BaseGeometry {
 
-    static final short[] pyramidFaceIndices =
+    static final int[] pyramidFaceIndices =
             {
                     1,0,2,
                     2,0,3,

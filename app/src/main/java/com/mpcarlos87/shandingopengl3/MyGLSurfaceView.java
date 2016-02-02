@@ -6,6 +6,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Created by Carlos on 22/02/2015.
  */
@@ -22,7 +26,15 @@ public class MyGLSurfaceView extends GLSurfaceView {
         super(context);
         // Create an OpenGL ES 3.0 context
         setEGLContextClientVersion(3);
-        mRenderer = new MyGLRenderer();
+
+        //Read from the resources the file
+        InputStream inputStream= null;
+        try {
+            inputStream = getResources().getAssets().open("dragon_obj");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mRenderer = new MyGLRenderer(inputStream);
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(mRenderer);
         // Render the view only when there is a change in the drawing data
@@ -32,6 +44,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
         int width=dm.widthPixels;
         int height=dm.heightPixels;
         mDiagonal = Math.sqrt(Math.pow(width,2)+Math.pow(height,2));
+
+
     }
 
     @Override

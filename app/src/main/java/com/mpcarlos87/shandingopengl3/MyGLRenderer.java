@@ -6,9 +6,14 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
+import com.mpcarlos87.shandingopengl3.Geometry.BaseGeometry;
 import com.mpcarlos87.shandingopengl3.Geometry.Box;
+import com.mpcarlos87.shandingopengl3.Geometry.CustomMesh;
 import com.mpcarlos87.shandingopengl3.Geometry.Pyramid;
 import com.mpcarlos87.shandingopengl3.Geometry.Triangle;
+import com.mpcarlos87.shandingopengl3.Loaders.ObjLoader;
+
+import java.io.InputStream;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -20,6 +25,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private Triangle mTriangle;
     private Pyramid mPyramid;
     private Box mBox;
+    private BaseGeometry mGeometry;
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
@@ -37,6 +43,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private final int NEAR_PLANE = 1, FAR_PLANE = 40;
 
+    private CustomMesh _mesh;
+    public MyGLRenderer(InputStream inputStream){
+        _mesh = ObjLoader.ObjLoader(inputStream);
+    }
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         mDistance = -3.0f;
@@ -46,7 +56,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // initialize the geometry
         //mTriangle = new Triangle();
         //mPyramid = new Pyramid();
-        mBox = new Box();
+        //mBox = new Box();
+        mGeometry = new BaseGeometry(_mesh.Vertices,_mesh.Faces,_mesh.Colors);
     }
 
     @Override
@@ -71,7 +82,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         //long time = SystemClock.uptimeMillis() % 4000L;//TODO: TOUCH
         //mAngle = 0.090f * ((int) time);//TODO: TOUCH
         Matrix.setRotateM(mRotationMatrixY, 0, mAngleY, 0, 1.0f, 0);
-        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, -1.0f, 0, 0);
+        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, 1.0f, 0, 0);
         Matrix.multiplyMM(mRotationMatrix,0,mRotationMatrixX,0,mRotationMatrixY,0);
 
         // Combine the rotation matrix with the projection and camera view
@@ -88,6 +99,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Draw Box
         if(mBox!=null)
             mBox.draw(scratch);
+        if(mGeometry!=null)
+            mGeometry.draw(scratch);
     }
 
     public static int loadShader(int type, String shaderCode)

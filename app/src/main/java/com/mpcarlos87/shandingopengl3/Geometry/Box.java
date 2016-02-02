@@ -4,7 +4,7 @@ package com.mpcarlos87.shandingopengl3.Geometry;
  * Created by Carlos on 05/07/2015.
  */
 public class Box extends BaseGeometry{
-    static final short[] boxFaceIndices =
+    static final int[] boxFaceIndices =
             {
                     0, 1, 2,
                     2, 3, 0,

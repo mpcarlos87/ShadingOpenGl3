@@ -7,6 +7,7 @@ import com.mpcarlos87.shandingopengl3.MyGLRenderer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 /**
@@ -37,8 +38,8 @@ public class BaseGeometry {
 
 
     private FloatBuffer vertexBuffer,vertexColorBuffer;
-    private ShortBuffer mIndices;
-    private final short[] mIndicesFaces; //TODO: Constructor
+    private IntBuffer mIndices;
+    private final int[] mIndicesFaces; //TODO: Constructor
     private int mNumIndices = 0; //TODO: Constructor from mIndicesData(Size)
     // Use to access and set the view transformation
     private int mMVPMatrixHandle;
@@ -60,7 +61,7 @@ public class BaseGeometry {
     // VertexBufferObject Ids
     private int [] mVBOIds = new int[1];
 
-    public BaseGeometry(float[] coords, short[] faces, float[] colors) {
+    public BaseGeometry(float[] coords, int[] faces, float[] colors) {
         mGeometryCoords = coords;
         mNumIndices = faces.length;
         mIndicesFaces = faces;
@@ -88,7 +89,7 @@ public class BaseGeometry {
         vertexColorBuffer.put(mColors).position(0);
 
         //Create the buffer of indices
-        mIndices = ByteBuffer.allocateDirect(mIndicesFaces.length * 2 ).order ( ByteOrder.nativeOrder() ).asShortBuffer();
+        mIndices = ByteBuffer.allocateDirect(mIndicesFaces.length * 4 ).order ( ByteOrder.nativeOrder() ).asIntBuffer();
         mIndices.put(mIndicesFaces).position(0);
 
         mVBOIds[0] = 0;
@@ -144,13 +145,13 @@ public class BaseGeometry {
             GLES30.glGenBuffers ( 1, mVBOIds, 0 );
             mIndices.position ( 0 );
             GLES30.glBindBuffer ( GLES30.GL_ELEMENT_ARRAY_BUFFER, mVBOIds[0] );
-            GLES30.glBufferData ( GLES30.GL_ELEMENT_ARRAY_BUFFER, 2 * numIndices, mIndices, GLES30.GL_STATIC_DRAW );
+            GLES30.glBufferData ( GLES30.GL_ELEMENT_ARRAY_BUFFER, 4 * numIndices, mIndices, GLES30.GL_STATIC_DRAW );
         }
 
         //Bind the buffer of the faces
         GLES30.glBindBuffer ( GLES30.GL_ELEMENT_ARRAY_BUFFER, mVBOIds[0] );
         // Draw the geometry
-        GLES30.glDrawElements( GLES30.GL_TRIANGLES,numIndices,GLES30.GL_UNSIGNED_SHORT, 0 );
+        GLES30.glDrawElements( GLES30.GL_TRIANGLES,numIndices,GLES30.GL_UNSIGNED_INT, 0 );
         // Disable vertex array
         GLES30.glDisableVertexAttribArray(mPositionHandle);
         //Disable bind buffer??
