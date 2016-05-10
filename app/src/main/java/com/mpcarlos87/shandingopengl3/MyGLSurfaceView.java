@@ -44,8 +44,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
         int width=dm.widthPixels;
         int height=dm.heightPixels;
         mDiagonal = Math.sqrt(Math.pow(width,2)+Math.pow(height,2));
-
-
     }
 
     @Override
@@ -111,7 +109,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 e.getPointerCoords(0,mFinger1);
                 e.getPointerCoords(1,mFinger2);
                 mDistance = ComputeDistance(mFinger1,mFinger2);
-                Log.d("DEBUG_ACTIONS", String.format("Distance: %f",mDistance));
                 break;
 
             // Case finger 2 or more up

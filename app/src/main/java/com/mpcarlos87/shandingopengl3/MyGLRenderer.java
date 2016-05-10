@@ -129,6 +129,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void setDistance(double distance){
-        mDistance -= distance;
+        float newDistance = mDistance-(float)distance;
+        if(newDistance> 0)
+            mDistance = newDistance;
     }
 }
